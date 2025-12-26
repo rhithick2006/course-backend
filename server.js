@@ -30,7 +30,7 @@ db.connect(err => {
         
         // --- AUTOMATIC TABLE CREATION LOGIC ---
         
-        // 1. Create Users Table (Matches your sql.json)
+        // 1. Create Users Table
         const userTable = `
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +41,7 @@ db.connect(err => {
                 password VARCHAR(255)
             )`;
 
-        // 2. Create Reviews Table (Matches your sql.json)
+        // 2. Create Reviews Table
         const reviewTable = `
             CREATE TABLE IF NOT EXISTS reviews (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -106,13 +106,22 @@ app.post('/reviews', (req, res) => {
     });
 });
 
-// 5. ADMIN API: GET ALL USERS (New!)
-// This allows your users.html page to display the table
+// 5. ADMIN API: GET ALL USERS
 app.get('/users', (req, res) => {
     const sql = 'SELECT id, name, email, phone, dob FROM users';
     db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results);
+    });
+});
+
+// 6. ADMIN API: DELETE USER (New!)
+app.delete('/users/:id', (req, res) => {
+    const userId = req.params.id;
+    const sql = 'DELETE FROM users WHERE id = ?';
+    db.query(sql, [userId], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'User deleted successfully' });
     });
 });
 
