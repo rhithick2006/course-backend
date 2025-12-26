@@ -5,19 +5,15 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors()); // Allows Frontend to talk to Backend
+app.use(cors()); // Allows Netlify/Frontend to talk to Render
 app.use(bodyParser.json());
 
-// DATABASE CONNECTION
-// I have updated this with your specific Aiven details
+// DATABASE CONNECTION (UPDATED FIX)
+// Using the Service URI is often more stable for Aiven connections on Render
 const db = mysql.createConnection({
-    host: 'mysql-10ebf2a8-rhithicklakshmanan-d0d5.j.aivencloud.com', 
-    user: 'avnadmin',
-    password: 'AVNS_0dNIH0i-nmlYWEJFMle',
-    database: 'defaultdb',
-    port: 12329,
+    uri: 'mysql://avnadmin:AVNS_0dNIH0i-nmlYWEJFMle@mysql-10ebf2a8-rhithicklakshmanan-d0d5.j.aivencloud.com:12329/defaultdb?ssl-mode=REQUIRED',
     ssl: {
-        rejectUnauthorized: false // Required for Aiven SSL connection
+        rejectUnauthorized: false // Fixes SSL handshake errors
     }
 });
 
@@ -25,11 +21,9 @@ db.connect(err => {
     if (err) { 
         console.error('DB Connection Error:', err); 
     } else { 
-        console.log('Connected to Aiven MySQL Database'); 
+        console.log('Connected to Aiven MySQL Database Successfully'); 
         
         // --- AUTOMATIC TABLE CREATION LOGIC ---
-        // This creates your tables automatically when the app starts
-        
         // 1. Create Users Table
         const userTable = `
             CREATE TABLE IF NOT EXISTS users (
@@ -53,12 +47,12 @@ db.connect(err => {
 
         db.query(userTable, (err) => {
             if (err) console.error("Error creating users table:", err);
-            else console.log("Users table ready");
+            else console.log("Users table check: OK");
         });
 
         db.query(reviewTable, (err) => {
             if (err) console.error("Error creating reviews table:", err);
-            else console.log("Reviews table ready");
+            else console.log("Reviews table check: OK");
         });
     }
 });
