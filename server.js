@@ -5,19 +5,19 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors()); // Allows Netlify/Frontend to talk to Render Backend
+app.use(cors()); // Allows Frontend to talk to Backend
 app.use(bodyParser.json());
 
 // DATABASE CONNECTION
-// Uses Environment Variables for Security (Set these in Render Dashboard)
+// I have updated this with your specific Aiven details
 const db = mysql.createConnection({
-    host: process.env.DB_HOST, 
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 3306,
+    host: 'mysql-10ebf2a8-rhithicklakshmanan-d0d5.j.aivencloud.com', 
+    user: 'avnadmin',
+    password: 'AVNS_0dNIH0i-nmlYWEJFMle',
+    database: 'defaultdb',
+    port: 12329,
     ssl: {
-        rejectUnauthorized: false // Required for Aiven and many cloud MySQL providers
+        rejectUnauthorized: false // Required for Aiven SSL connection
     }
 });
 
@@ -25,9 +25,10 @@ db.connect(err => {
     if (err) { 
         console.error('DB Connection Error:', err); 
     } else { 
-        console.log('Connected to MySQL Database'); 
+        console.log('Connected to Aiven MySQL Database'); 
         
         // --- AUTOMATIC TABLE CREATION LOGIC ---
+        // This creates your tables automatically when the app starts
         
         // 1. Create Users Table
         const userTable = `
@@ -52,15 +53,13 @@ db.connect(err => {
 
         db.query(userTable, (err) => {
             if (err) console.error("Error creating users table:", err);
-            else console.log("Users table check/creation: OK");
+            else console.log("Users table ready");
         });
 
         db.query(reviewTable, (err) => {
             if (err) console.error("Error creating reviews table:", err);
-            else console.log("Reviews table check/creation: OK");
+            else console.log("Reviews table ready");
         });
-        
-        // -------------------------------------
     }
 });
 
