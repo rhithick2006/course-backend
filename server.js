@@ -5,26 +5,32 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(cors()); // Allows Netlify/Frontend to talk to Render
+app.use(cors()); // Allows Frontend to talk to Backend
 app.use(bodyParser.json());
 
-// DATABASE CONNECTION (UPDATED FIX)
-// Using the Service URI is often more stable for Aiven connections on Render
+// DATABASE CONNECTION
+// Connected to your Aiven MySQL Database
 const db = mysql.createConnection({
     uri: 'mysql://avnadmin:AVNS_0dNIH0i-nmlYWEJFMle@mysql-10ebf2a8-rhithicklakshmanan-d0d5.j.aivencloud.com:12329/defaultdb?ssl-mode=REQUIRED',
     ssl: {
-        rejectUnauthorized: false // Fixes SSL handshake errors
+        rejectUnauthorized: false // Fixes SSL handshake errors for Aiven
     }
 });
 
 db.connect(err => {
     if (err) { 
-        console.error('DB Connection Error:', err); 
+        console.error('------------------------------------------');
+        console.error('FAILED TO CONNECT TO DATABASE');
+        console.error(err);
+        console.error('------------------------------------------');
     } else { 
-        console.log('Connected to Aiven MySQL Database Successfully'); 
+        console.log('------------------------------------------');
+        console.log('✅ SUCCESS: Connected to Aiven MySQL'); 
+        console.log('------------------------------------------');
         
         // --- AUTOMATIC TABLE CREATION LOGIC ---
-        // 1. Create Users Table
+        
+        // 1. Create Users Table (Matches your sql.json)
         const userTable = `
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,7 +41,7 @@ db.connect(err => {
                 password VARCHAR(255)
             )`;
 
-        // 2. Create Reviews Table
+        // 2. Create Reviews Table (Matches your sql.json)
         const reviewTable = `
             CREATE TABLE IF NOT EXISTS reviews (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -97,6 +103,16 @@ app.post('/reviews', (req, res) => {
     db.query(sql, [user_name, review_text, rating], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Review Added!' });
+    });
+});
+
+// 5. ADMIN API: GET ALL USERS (New!)
+// This allows your users.html page to display the table
+app.get('/users', (req, res) => {
+    const sql = 'SELECT id, name, email, phone, dob FROM users';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
     });
 });
 
