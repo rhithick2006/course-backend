@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vibranium C++ Masterclass - The Definitive Guide to C++ Programming">
+    <meta name="author" content="Vibranium Systems">
+    <title>Vibranium C++ Masterclass | Ultimate Edition</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* ------------------------------------------------------------------
+           2.1. VARIABLES & RESET
+           ------------------------------------------------------------------ */
+        :root {
+            /* Palette: Deep Space & Neon */
+            --color-bg-deep: #050505;
+            --color-bg-panel: #0a0a0a;
+            --color-bg-card: #111111;
+            --color-bg-input: #151515;
+            
+            /* Accents: Cyan (Knowledge) & Gold (Mastery) */
+            --color-accent-cyan: #00ffff;
+            --color-accent-cyan-dim: rgba(0, 255, 255, 0.1);
+            --color-accent-cyan-glow: rgba(0, 255, 255, 0.4);
+            
+            --color-accent-gold: #D4AF37;
+            --color-accent-gold-dim: rgba(212, 175, 55, 0.1);
+            --color-accent-gold-glow: rgba(212, 175, 55, 0.5);
+            
+            /* Text Hierarchy */
+            --color-text-main: #E5E4E2;
+            --color-text-muted: #888888;
+            --color-text-dark: #000000;
+            
+            /* Functional Colors */
+            --color-success: #00ff88;
+            --color-danger: #ff3333;
+            --color-warning: #ffcc00;
+            
+            /* UI Elements */
+            --border-light: 1px solid rgba(255, 255, 255, 0.08);
+            --border-active: 1px solid var(--color-accent-cyan);
+            --box-shadow-std: 0 10px 30px rgba(0,0,0,0.5);
+            
+            /* Typography */
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --font-script: 'Pinyon Script', cursive;
+        }
+
+        /* Standard Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: var(--color-bg-deep);
+            color: var(--color-text-main);
+            font-family: var(--font-body);
+            font-size: 16px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--color-bg-deep); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-cyan); }
+
+        /* ------------------------------------------------------------------
+           2.2. SIDEBAR COMPONENTS
+           ------------------------------------------------------------------ */
+        .sidebar {
+            width: 380px;
+            height: 100%;
+            background-color: var(--color-bg-panel);
+            border-right: var(--border-light);
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .brand-container {
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: var(--border-light);
+            background: linear-gradient(180deg, rgba(20,20,20,1) 0%, rgba(10,10,10,0) 100%);
+            position: relative;
+        }
+
+        .brand-logo h1 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px var(--color-accent-cyan-dim);
+            margin-bottom: 5px;
+        }
+
+        .brand-logo span { color: var(--color-accent-cyan); }
+
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .close-sidebar-btn {
+            display: none;
+            position: absolute;
+            top: 20px; right: 20px;
+            background: transparent; border: none;
+            color: white; font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Progress Dashboard */
+        .progress-dashboard {
+            padding: 30px;
+            background-color: #080808;
+            border-bottom: var(--border-light);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background-color: #222;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-accent-cyan), #0088ff);
+            box-shadow: 0 0 15px var(--color-accent-cyan);
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Level List */
+        .level-nav-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            padding: 18px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease-in-out;
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.03);
+            color: #ffffff;
+            padding-left: 35px;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.05), transparent);
+            border-left: 3px solid var(--color-accent-cyan);
+            color: var(--color-accent-cyan);
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--color-accent-cyan-dim);
+        }
+
+        .nav-item.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .status-icon { font-size: 0.8rem; }
+        .nav-item.completed .status-icon { color: var(--color-success); }
+        .nav-item.locked .status-icon { color: #444; }
+
+        /* Certificate Unlock Button */
+        .certificate-unlock-area {
+            padding: 25px;
+            background-color: #000;
+            border-top: var(--border-light);
+        }
+
+        .btn-claim-certificate {
+            width: 100%;
+            padding: 18px;
+            background-color: #111;
+            color: #666;
+            border: 1px solid #333;
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: not-allowed;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-claim-certificate.unlocked {
+            border-color: var(--color-accent-gold);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a00 100%);
+            color: var(--color-accent-gold);
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+            animation: goldPulse 3s infinite;
+        }
+
+        .btn-claim-certificate.unlocked:hover {
+            background: var(--color-accent-gold);
+            color: #000;
+            box-shadow: 0 0 40px var(--color-accent-gold-glow);
+            transform: translateY(-2px);
+        }
+
+        @keyframes goldPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* ------------------------------------------------------------------
+           2.3. MAIN WORKSPACE
+           ------------------------------------------------------------------ */
+        .main-workspace {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(0, 255, 255, 0.02), transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(212, 175, 55, 0.02), transparent 40%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workspace-header {
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: var(--border-light);
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .mobile-menu-trigger {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--color-accent-cyan);
+            font-size: 1.8rem;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .level-info h3 {
+            color: var(--color-accent-cyan);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .level-info h2 {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+            padding: 8px 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 50px;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .content-wrapper {
+            padding: 60px 80px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .level-hero-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border: var(--border-light);
+            border-radius: 4px;
+            margin-bottom: 50px;
+            filter: brightness(0.9) contrast(1.1) saturate(1.1);
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        }
+
+        /* Theory Content Styling */
+        .theory-block {
+            margin-bottom: 60px;
+            font-size: 1.15rem;
+            line-height: 2;
+            color: #cccccc;
+        }
+
+        .theory-block h3 {
+            font-family: var(--font-display);
+            color: #ffffff;
+            font-size: 1.8rem;
+            margin: 40px 0 20px 0;
+            padding-left: 20px;
+            border-left: 4px solid var(--color-accent-gold);
+        }
+
+        .theory-block p { margin-bottom: 20px; }
+        .theory-block strong { color: var(--color-accent-cyan); font-weight: 600; }
+        .theory-block ul { margin-left: 20px; margin-bottom: 20px; }
+        .theory-block li { margin-bottom: 10px; }
+        
+        .theory-block code {
+            background-color: rgba(255,255,255,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-code);
+            color: var(--color-accent-cyan);
+            font-size: 0.95em;
+        }
+
+        /* Code Snippet Display */
+        .code-display {
+            background-color: #0e0e0e;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+            font-family: var(--font-code);
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .code-display::after {
+            content: 'C++ SOURCE';
+            position: absolute;
+            top: 0; right: 0;
+            background: #222;
+            color: #888;
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-bottom-left-radius: 6px;
+            font-family: var(--font-body);
+            font-weight: 700;
+        }
+
+        /* ------------------------------------------------------------------
+           2.4. ASSESSMENT UI
+           ------------------------------------------------------------------ */
+        .assessment-card {
+            background: rgba(20, 20, 20, 0.6);
+            border: var(--border-light);
+            border-radius: 8px;
+            padding: 50px;
+            margin-top: 50px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .assessment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: var(--border-light);
+            padding-bottom: 25px;
+            margin-bottom: 40px;
+        }
+
+        .assessment-header h4 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .pass-criteria {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            background: rgba(255,255,255,0.05);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .quiz-question-container { margin-bottom: 50px; }
+        .question-text { font-size: 1.2rem; color: white; margin-bottom: 25px; font-weight: 500; }
+        .question-number { color: var(--color-accent-cyan); font-weight: 700; margin-right: 10px; }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            padding: 18px 25px;
+            background-color: #151515;
+            border: 1px solid transparent;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            color: #aaa;
+        }
+
+        .quiz-option:hover {
+            background-color: #222;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.selected {
+            background-color: rgba(0, 255, 255, 0.08);
+            border-color: var(--color-accent-cyan);
+            color: white;
+        }
+
+        .quiz-option input {
+            margin-right: 20px;
+            accent-color: var(--color-accent-cyan);
+            transform: scale(1.2);
+        }
+
+        .code-input-area {
+            width: 100%;
+            height: 250px;
+            background-color: #050505;
+            border: 1px solid #333;
+            color: var(--color-success);
+            font-family: var(--font-code);
+            font-size: 1rem;
+            padding: 20px;
+            border-radius: 4px;
+            resize: vertical;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .code-input-area:focus {
+            border-color: var(--color-accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .btn-submit-assessment {
+            width: 100%;
+            padding: 20px;
+            background-color: var(--color-accent-cyan);
+            color: #000;
+            border: none;
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        }
+
+        .btn-submit-assessment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            background-color: white;
+        }
+
+        /* ------------------------------------------------------------------
+           2.5. RESPONSIVE MEDIA QUERIES
+           ------------------------------------------------------------------ */
+        @media (max-width: 1024px) {
+            .content-wrapper { padding: 40px; }
+            .sidebar { width: 300px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 85%;
+                max-width: 320px;
+                box-shadow: 100px 0 100px rgba(0,0,0,0.8);
+            }
+            .sidebar.active { transform: translateX(100%); }
+            .close-sidebar-btn { display: block; }
+            .mobile-menu-trigger { display: block; }
+            .workspace-header { padding: 20px; }
+            .header-title h2 { font-size: 1.4rem; }
+            .content-wrapper { padding: 25px 20px; }
+            .level-hero-image { height: 180px; }
+            .theory-block h3 { font-size: 1.4rem; }
+            .theory-block { font-size: 1rem; }
+            .assessment-card { padding: 25px; }
+            .code-display { font-size: 0.8rem; padding: 15px; }
+            .code-input-area { font-size: 0.9rem; }
+        }
+
+        /* ------------------------------------------------------------------
+           2.6. MODALS
+           ------------------------------------------------------------------ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #0a0a0a;
+            border: 1px solid var(--color-accent-gold);
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.15);
+            animation: slideUpFade 0.4s ease-out;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            color: white;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .modal-score {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        .score-pass { color: var(--color-success); text-shadow: 0 0 30px rgba(0, 255, 136, 0.3); }
+        .score-fail { color: var(--color-danger); }
+
+        .modal-msg { font-size: 1.1rem; color: #ccc; margin-bottom: 40px; }
+        .btn-modal-action {
+            background: white; color: black; border: none; padding: 15px 40px; font-weight: 700; text-transform: uppercase; cursor: pointer; font-family: var(--font-body); transition: 0.3s;
+        }
+        .btn-modal-action:hover { background: var(--color-accent-cyan); box-shadow: 0 0 20px var(--color-accent-cyan); }
+
+        /* ------------------------------------------------------------------
+           2.7. CERTIFICATE ENGINE (1-PAGE GUARANTEE)
+           ------------------------------------------------------------------ */
+        #certificate-overlay {
+            display: none; /* Changed via JS to flex */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 5000;
+            /* Flex center for viewing logic */
+            align-items: center; justify-content: center;
+            overflow-y: auto;
+        }
+
+        .cert-action-bar {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 5001;
+            display: flex; gap: 15px; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 50px; border: 1px solid #333; backdrop-filter: blur(10px);
+        }
+
+        .btn-cert-download { padding: 10px 25px; border-radius: 25px; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; background: var(--color-accent-cyan); color: black; }
+        .btn-cert-close { padding: 10px 25px; border-radius: 25px; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; background: #333; color: white; }
+
+        /* CRITICAL: A4 Landscape Pixel Dimensions (1123x794 @ 96 DPI) */
+        #certificate-paper {
+            width: 1123px;
+            height: 794px;
+            margin: 0 auto; /* Centered visually */
+            background-color: #ffffff;
+            color: #111;
+            position: relative;
+            padding: 60px;
+            box-sizing: border-box;
+            border: 20px solid #D4AF37;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform-origin: center;
+        }
+
+        /* Certificate Aesthetics */
+        .ornament { position: absolute; width: 150px; height: 150px; border-top: 4px solid #D4AF37; border-left: 4px solid #D4AF37; }
+        .ornament.tl { top: 25px; left: 25px; }
+        .ornament.tr { top: 25px; right: 25px; transform: rotate(90deg); }
+        .ornament.br { bottom: 25px; right: 25px; transform: rotate(180deg); }
+        .ornament.bl { bottom: 25px; left: 25px; transform: rotate(270deg); }
+
+        .cert-header { font-family: var(--font-display); font-size: 3.5rem; margin-bottom: 10px; color: #000; letter-spacing: 5px; text-transform: uppercase; }
+        .cert-subheader { font-family: var(--font-body); font-size: 1.1rem; letter-spacing: 4px; text-transform: uppercase; color: #555; margin-bottom: 40px; }
+        
+        .cert-candidate-name {
+            border: none; border-bottom: 1px dashed #999; width: 80%; text-align: center;
+            font-family: var(--font-script); font-size: 5rem; color: #D4AF37; background: transparent; margin: 10px 0 30px 0; outline: none;
+        }
+        
+        .cert-body-text { font-size: 1.4rem; line-height: 1.6; color: #333; max-width: 800px; margin-bottom: 50px; }
+        .gold-seal { margin-bottom: 40px; color: #D4AF37; font-size: 5rem; text-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        
+        .cert-footer-row { display: flex; justify-content: space-between; width: 70%; margin-top: 40px; }
+        .signature-block { text-align: center; }
+        .sign-img { font-family: var(--font-script); font-size: 2.5rem; color: #000; margin-bottom: 5px; }
+        .sign-line { width: 280px; height: 2px; background: #000; margin: 0 auto 10px auto; }
+        .sign-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #555; }
+
+        /* CRITICAL PRINT FIXES */
+        @media print {
+            body * { visibility: hidden; }
+            body { margin: 0; padding: 0; overflow: hidden; height: 100vh; }
+            #certificate-overlay {
+                display: flex !important;
+                visibility: visible;
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background: white; margin: 0; padding: 0;
+            }
+            #certificate-paper, #certificate-paper * {
+                visibility: visible;
+                display: flex !important;
+            }
+            #certificate-paper {
+                box-shadow: none; margin: 0; border: 10px solid #D4AF37; /* Slightly thinner for print */
+                width: 100%; height: 100%; /* Force fill */
+                transform: scale(1);
+            }
+            .cert-action-bar { display: none !important; }
+            .cert-candidate-name { border-bottom: none; }
+        }
+
+        /* Mobile Cert Preview */
+        @media (max-width: 768px) {
+            #certificate-paper { transform: scale(0.45); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar" id="mainSidebar">
+        <div class="brand-container">
+            <button class="close-sidebar-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
+            <div class="brand-logo"><h1>Vibranium <span>C++</span></h1></div>
+            <p class="brand-tagline">School of Elite Coding</p>
+        </div>
+        
+        <div class="progress-dashboard">
+            <div class="progress-label">
+                <span>MASTERY</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="level-nav-list" id="navigationList">
+            </div>
+
+        <div class="certificate-unlock-area">
+            <button class="btn-claim-certificate" id="certUnlockBtn" onclick="openCertificateFlow()">
+                <i class="fas fa-lock" id="certBtnIcon"></i>
+                <span id="certBtnText">LOCKED</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-workspace">
+        <header class="workspace-header">
+            <div style="display: flex; align-items: center;">
+                <button class="mobile-menu-trigger" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="level-info">
+                    <h3 id="currentLevelId">LEVEL 01</h3>
+                    <h2 id="currentLevelTitle">Introduction</h2>
+                </div>
+            </div>
+            <button class="btn-reset" onclick="resetProgress()">Reset Course</button>
+        </header>
+
+        <div class="content-wrapper" id="mainContent">
+            </div>
+    </main>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-card">
+            <h2 class="modal-title">ASSESSMENT REPORT</h2>
+            <div class="modal-score" id="resultScore">0/10</div>
+            <p class="modal-msg" id="resultMsg">Calculating...</p>
+            <button class="btn-modal-action" id="resultActionBtn">Proceed</button>
+        </div>
+    </div>
+
+    <div id="certificate-overlay">
+        <div class="cert-action-bar">
+            <button class="btn-cert-download" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+            <button class="btn-cert-close" onclick="closeCertificate()"><i class="fas fa-times"></i> Close</button>
+        </div>
+
+        <div id="certificate-paper">
+            <div class="ornament tl"></div>
+            <div class="ornament tr"></div>
+            <div class="ornament bl"></div>
+            <div class="ornament br"></div>
+
+            <h1 class="cert-header">Certificate of Mastery</h1>
+            <p class="cert-subheader">This credential is formally awarded to</p>
+
+            <input type="text" class="cert-candidate-name" value="Your Name Here" onclick="this.select()">
+
+            <div class="cert-body-text">
+                <p>For successfully completing the comprehensive <strong>Vibranium C++ Masterclass</strong> curriculum.</p>
+                <p style="margin-top: 15px; font-size: 1rem; color: #555;">
+                    The recipient has demonstrated exceptional proficiency in System Architecture, Memory Management, Object-Oriented Design, and STL implementation.
+                </p>
+            </div>
+
+            <div class="gold-seal"><i class="fas fa-award"></i></div>
+
+            <div class="cert-footer-row">
+                <div class="signature-block">
+                    <div class="sign-img">Authorized Signature</div>
+                    <div class="sign-line"></div>
+                    <p class="sign-label">VIBRANIUM SYSTEMS</p>
+                </div>
+                <div class="signature-block">
+                    <div class="sign-img" id="certDateDisplay" style="font-family: 'Courier New', monospace; font-size: 1.5rem;">2025-12-26</div>
+                    <div class="sign-line"></div>
+                    <p class="sign-label">DATE ISSUED</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* -----------------------------------------------------------
+           4.1. DATA ENGINE (Detailed C++ Curriculum)
+           ----------------------------------------------------------- */
+        const curriculumData = [
+            {
+                id: 1,
+                title: "Introduction to C++",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>The Power of C++</h3><p>C++ is a cross-platform language that can be used to create high-performance applications. It was developed by Bjarne Stroustrup as an extension to the C language. It gives programmers a high level of control over system resources and memory.</p><h3>Main Function</h3><p>Every C++ program has a <code>main()</code> function, which is the entry point of execution.</p>`,
+                codeSnippet: `#include &lt;iostream&gt;\n\nint main() {\n    std::cout << "Hello World!";\n    return 0;\n}`,
+                quiz: { q: "Who developed C++?", options: ["Dennis Ritchie", "Bjarne Stroustrup", "Guido van Rossum", "James Gosling"], answer: 1 },
+                task: { instruction: "Write code to print 'Hello' using cout.", keywords: ["cout", "<<", "\"Hello\""] }
+            },
+            {
+                id: 2,
+                title: "Features of C++",
+                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Core Features</h3><p>C++ is known for being:</p><ul><li><strong>Object-Oriented:</strong> Uses classes and objects.</li><li><strong>Fast:</strong> compiled directly to machine code.</li><li><strong>Portable:</strong> Can run on different architectures.</li><li><strong>Rich Library:</strong> The Standard Template Library (STL) is massive.</li></ul>`,
+                codeSnippet: `// Simple Comment\n/* Multi-line \n   Comment */\n\nclass Feature {\n    // OOP Structure\n};`,
+                quiz: { q: "Which is NOT a feature of C++?", options: ["Object-Oriented", "Interpreted", "Fast", "Compiled"], answer: 1 },
+                task: { instruction: "Create a single line comment saying 'Test'.", keywords: ["//", "Test"] }
+            },
+            {
+                id: 3,
+                title: "Structure of C++ Program",
+                image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Headers</h3><p>Programs begin with <code>#include</code> directives to load libraries like <code>&lt;iostream&gt;</code>.</p><h3>Namespaces</h3><p><code>using namespace std;</code> tells the compiler to use the standard namespace, so you don't have to type <code>std::</code> before every standard command.</p>`,
+                codeSnippet: `#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n    return 0;\n}`,
+                quiz: { q: "Which directive includes libraries?", options: ["#import", "#include", "using", "package"], answer: 1 },
+                task: { instruction: "Include the iostream library.", keywords: ["#include", "<iostream>"] }
+            },
+            {
+                id: 4,
+                title: "Data Types",
+                image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Primitive Types</h3><ul><li><code>int</code>: Whole numbers (4 bytes).</li><li><code>double</code>: Floating point numbers (8 bytes).</li><li><code>char</code>: Single character (1 byte).</li><li><code>bool</code>: True or False (1 byte).</li><li><code>string</code>: Text (included via &lt;string&gt;).</li></ul>`,
+                codeSnippet: `int age = 25;\ndouble price = 19.99;\nchar grade = 'A';\nbool active = true;`,
+                quiz: { q: "Size of an int is usually?", options: ["2 bytes", "4 bytes", "8 bytes", "1 byte"], answer: 1 },
+                task: { instruction: "Declare an integer named 'score' with value 100.", keywords: ["int", "score", "=", "100", ";"] }
+            },
+            {
+                id: 5,
+                title: "Variables and Constants",
+                image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Variables</h3><p>Containers for storing data values. Must be declared with a type.</p><h3>Constants</h3><p>The <code>const</code> keyword creates a read-only variable. Once assigned, it cannot be changed.</p>`,
+                codeSnippet: `int x = 5;\nconst float PI = 3.14;\n// PI = 3.15; // This causes error`,
+                quiz: { q: "Keyword for read-only variables?", options: ["final", "static", "const", "let"], answer: 2 },
+                task: { instruction: "Define a constant int named MAX with value 10.", keywords: ["const", "int", "MAX", "=", "10"] }
+            },
+            {
+                id: 6,
+                title: "Operators in C++",
+                image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Types of Operators</h3><ul><li>**Arithmetic:** +, -, *, /, % (Modulus).</li><li>**Assignment:** =, +=, -=.</li><li>**Comparison:** ==, !=, >, <.</li><li>**Logical:** && (AND), || (OR), ! (NOT).</li></ul>`,
+                codeSnippet: `int a = 10, b = 3;\nint sum = a + b;\nbool check = (a > b) && (b > 0);`,
+                quiz: { q: "Operator for logical OR?", options: ["&", "||", "OR", "|"], answer: 1 },
+                task: { instruction: "Check if 'x' equals 'y'.", keywords: ["x", "==", "y"] }
+            },
+            {
+                id: 7,
+                title: "Input and Output",
+                image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Streams</h3><p>C++ uses streams for IO.</p><ul><li><code>cout</code>: Standard output stream (Insertion operator &lt;&lt;).</li><li><code>cin</code>: Standard input stream (Extraction operator &gt;&gt;).</li></ul>`,
+                codeSnippet: `int x;\ncout << "Enter number: ";\ncin >> x;\ncout << "You entered: " << x;`,
+                quiz: { q: "Operator used with cin?", options: ["<<", ">>", "::", "->"], answer: 1 },
+                task: { instruction: "Read user input into variable 'age'.", keywords: ["cin", ">>", "age"] }
+            },
+            {
+                id: 8,
+                title: "Control Statements",
+                image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Decision Making</h3><p>Use <code>if</code>, <code>else if</code>, and <code>else</code> to execute code based on conditions. C++ also supports the <code>switch</code> statement for selecting one of many code blocks.</p>`,
+                codeSnippet: `if (time < 12) {\n  cout << "Good morning";\n} else {\n  cout << "Good day";\n}`,
+                quiz: { q: "Switch statements use which keyword for blocks?", options: ["option", "select", "case", "when"], answer: 2 },
+                task: { instruction: "Write an if statement checking if x > 0.", keywords: ["if", "(", "x", ">", "0", ")"] }
+            },
+            {
+                id: 9,
+                title: "Loops",
+                image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Iteration</h3><ul><li>**For Loop:** When you know exactly how many times to loop.</li><li>**While Loop:** Loops as long as a condition is true.</li><li>**Do-While:** Executes the block once before checking the condition.</li></ul>`,
+                codeSnippet: `for (int i = 0; i < 5; i++) {\n  cout << i << "\\n";\n}`,
+                quiz: { q: "Loop that guarantees at least one execution?", options: ["for", "while", "do-while", "foreach"], answer: 2 },
+                task: { instruction: "Write a for loop that iterates 5 times.", keywords: ["for", "int", "i", "<", "5"] }
+            },
+            {
+                id: 10,
+                title: "Arrays",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Storing Multiple Values</h3><p>An array is a variable that can store multiple values of the same type. The size is fixed after declaration.</p><h3>Access</h3><p>Access elements by index (0-based).</p>`,
+                codeSnippet: `string cars[3] = {"Volvo", "BMW", "Ford"};\ncout << cars[0]; // Volvo`,
+                quiz: { q: "Index of the first element?", options: ["1", "0", "-1", "null"], answer: 1 },
+                task: { instruction: "Declare an int array named 'arr' of size 5.", keywords: ["int", "arr", "[", "5", "]"] }
+            },
+            {
+                id: 11,
+                title: "Strings",
+                image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>std::string</h3><p>The standard string class is more powerful than C-style char arrays. It provides methods like <code>length()</code>, <code>append()</code>, etc.</p><h3>Concatenation</h3><p>You can use the <code>+</code> operator to combine strings.</p>`,
+                codeSnippet: `#include &lt;string&gt;\nstring firstName = "John";\nstring fullName = firstName + " Doe";`,
+                quiz: { q: "Library needed for string objects?", options: ["<text>", "<string>", "<char>", "<iostream>"], answer: 1 },
+                task: { instruction: "Create a string variable named 'greeting'.", keywords: ["string", "greeting"] }
+            },
+            {
+                id: 12,
+                title: "Functions",
+                image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Modular Code</h3><p>Functions are blocks of code that perform a specific task. They run when called.</p><h3>Void</h3><p>If a function does not return a value, its return type is <code>void</code>.</p>`,
+                codeSnippet: `void myFunction() {\n  cout << "Executed!";\n}\n\nint main() {\n  myFunction();\n  return 0;\n}`,
+                quiz: { q: "Return type for no value?", options: ["null", "empty", "void", "0"], answer: 2 },
+                task: { instruction: "Define a function named 'setup' returning void.", keywords: ["void", "setup", "(", ")"] }
+            },
+            {
+                id: 13,
+                title: "Function Overloading",
+                image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Multiple Definitions</h3><p>With function overloading, multiple functions can have the same name with different parameters.</p><p>Example: <code>plusFunc(int, int)</code> vs <code>plusFunc(double, double)</code>.</p>`,
+                codeSnippet: `int plus(int x, int y) { return x + y; }\ndouble plus(double x, double y) { return x + y; }`,
+                quiz: { q: "Overloading depends on?", options: ["Return type", "Parameter list", "Function body", "Function name"], answer: 1 },
+                task: { instruction: "Define two functions named 'area' with different parameters.", keywords: ["area", "(", ")"] }
+            },
+            {
+                id: 14,
+                title: "Recursion",
+                image: "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Self-Calling Functions</h3><p>Recursion is the technique of making a function call itself. This provides a way to break complicated problems down into simple problems.</p><p>Must have a base case to stop infinite loops.</p>`,
+                codeSnippet: `int factorial(int n) {\n  if (n > 1)\n    return n * factorial(n - 1);\n  else\n    return 1;\n}`,
+                quiz: { q: "Condition to stop recursion is called?", options: ["End case", "Stop case", "Base case", "Limit"], answer: 2 },
+                task: { instruction: "Call function 'fact' inside itself.", keywords: ["fact", "("] }
+            },
+            {
+                id: 15,
+                title: "Pointers",
+                image: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Memory Addresses</h3><p>A pointer is a variable that stores the memory address of another variable. Created with <code>*</code>.</p><p>The <code>&</code> operator gives the address of a variable.</p>`,
+                codeSnippet: `string food = "Pizza";\nstring* ptr = &food;\n\ncout << ptr; // Outputs memory address`,
+                quiz: { q: "Operator to get address of variable?", options: ["*", "&", "->", "@"], answer: 1 },
+                task: { instruction: "Declare an integer pointer named 'p'.", keywords: ["int", "*", "p", ";"] }
+            },
+            {
+                id: 16,
+                title: "References",
+                image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Aliases</h3><p>A reference variable is a "reference" to an existing variable, and it is created with the <code>&</code> operator.</p><p>Unlike pointers, references must be initialized when created and cannot be null.</p>`,
+                codeSnippet: `string food = "Pizza";\nstring &meal = food;\n\nmeal = "Burger"; // Changes food too`,
+                quiz: { q: "Can references be null?", options: ["Yes", "No", "Sometimes", "Only in void"], answer: 1 },
+                task: { instruction: "Create a reference 'ref' to variable 'x'.", keywords: ["&", "ref", "=", "x"] }
+            },
+            {
+                id: 17,
+                title: "Structures (struct)",
+                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Grouping Data</h3><p>Structures (structs) are a way to group several related variables into one place. Each variable in the structure is known as a member.</p><p>Members are public by default.</p>`,
+                codeSnippet: `struct Car {\n  string brand;\n  int year;\n};\n\nCar myCar;\nmyCar.brand = "BMW";`,
+                quiz: { q: "Default access modifier for struct?", options: ["Private", "Protected", "Public", "Internal"], answer: 2 },
+                task: { instruction: "Define a struct named 'Point'.", keywords: ["struct", "Point", "{", "};"] }
+            },
+            {
+                id: 18,
+                title: "Unions",
+                image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Memory Sharing</h3><p>A union is a user-defined type similar to a struct, but all members share the same memory location. Changing one member affects the others.</p><p>Size is equal to the largest member.</p>`,
+                codeSnippet: `union Data {\n  int i;\n  float f;\n};\nData data;\ndata.i = 10;`,
+                quiz: { q: "Do union members share memory?", options: ["No", "Yes", "Depends on OS", "Only ints"], answer: 1 },
+                task: { instruction: "Define a union named 'Packet'.", keywords: ["union", "Packet", "{", "};"] }
+            },
+            {
+                id: 19,
+                title: "Enumerations (enum)",
+                image: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Named Constants</h3><p>An enum is a special type that represents a group of constants (unchangeable values).</p><p>By default, the first item has value 0, the second has 1, etc.</p>`,
+                codeSnippet: `enum Level {\n  LOW,\n  MEDIUM,\n  HIGH\n};\nLevel myVar = MEDIUM;`,
+                quiz: { q: "Default value of first enum item?", options: ["1", "0", "null", "-1"], answer: 1 },
+                task: { instruction: "Create an enum named 'Color'.", keywords: ["enum", "Color", "{"] }
+            },
+            {
+                id: 20,
+                title: "Classes and Objects",
+                image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>OOP Core</h3><p>Classes are blueprints for objects. They contain data (attributes) and functions (methods).</p><p>Objects are instances of a class.</p>`,
+                codeSnippet: `class MyClass {\n  public:\n    int myNum;\n};\n\nMyClass obj;\nobj.myNum = 15;`,
+                quiz: { q: "Keyword to create a class?", options: ["object", "struct", "class", "define"], answer: 2 },
+                task: { instruction: "Define a class named 'Hero'.", keywords: ["class", "Hero", ";"] }
+            },
+            {
+                id: 21,
+                title: "Constructors and Destructors",
+                image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Lifecycle Methods</h3><p>A <strong>Constructor</strong> is a special method called when an object is created. It has the same name as the class.</p><p>A <strong>Destructor</strong> (preceded by ~) is called when an object is destroyed.</p>`,
+                codeSnippet: `class Car {\n  public:\n    Car() { cout << "Created"; }\n    ~Car() { cout << "Destroyed"; }\n};`,
+                quiz: { q: "Symbol for destructor?", options: ["#", "!", "~", "-"], answer: 2 },
+                task: { instruction: "Write a constructor for class 'Box'.", keywords: ["Box()", "{", "}"] }
+            },
+            {
+                id: 22,
+                title: "Encapsulation",
+                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Data Hiding</h3><p>Encapsulation ensures that sensitive data is hidden from users. This is achieved by declaring class variables as <code>private</code> and providing public <code>get</code> and <code>set</code> methods to access/modify them.</p>`,
+                codeSnippet: `class User {\n  private:\n    int salary;\n  public:\n    void setSalary(int s) { salary = s; }\n};`,
+                quiz: { q: "Access modifier to hide data?", options: ["public", "private", "protected", "static"], answer: 1 },
+                task: { instruction: "Make an integer 'id' private.", keywords: ["private:", "int", "id"] }
+            },
+            {
+                id: 23,
+                title: "Inheritance",
+                image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Reusability</h3><p>Inheritance allows a class (child) to derive attributes and methods from another class (parent).</p><p>Uses the <code>:</code> symbol.</p>`,
+                codeSnippet: `class Vehicle { ... };\nclass Car : public Vehicle {\n  // Car inherits from Vehicle\n};`,
+                quiz: { q: "Symbol used for inheritance?", options: ["::", ":", "->", "extends"], answer: 1 },
+                task: { instruction: "Make class Dog inherit from Animal.", keywords: ["class", "Dog", ":", "public", "Animal"] }
+            },
+            {
+                id: 24,
+                title: "Polymorphism",
+                image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Many Forms</h3><p>Polymorphism means "many forms". It typically occurs when we have many classes that are related by inheritance.</p><p>It allows us to perform a single action in different ways.</p>`,
+                codeSnippet: `// Animal sound() -> "Generic"\n// Pig sound() -> "Wee"\n// Dog sound() -> "Woof"`,
+                quiz: { q: "Polymorphism relies heavily on?", options: ["Loops", "Inheritance", "Files", "Structs"], answer: 1 },
+                task: { instruction: "Override a function named 'sound'.", keywords: ["void", "sound()"] }
+            },
+            {
+                id: 25,
+                title: "Virtual Functions",
+                image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Dynamic Dispatch</h3><p>A virtual function is a member function within a base class that you expect to redefine in derived classes.</p><p>It ensures that the correct function is called for an object, regardless of the type of pointer used for the call.</p>`,
+                codeSnippet: `class Base {\n   virtual void print() { cout << "Base"; }\n};`,
+                quiz: { q: "Keyword for dynamic binding?", options: ["static", "virtual", "dynamic", "abstract"], answer: 1 },
+                task: { instruction: "Declare a virtual void function 'draw'.", keywords: ["virtual", "void", "draw()"] }
+            },
+            {
+                id: 26,
+                title: "Abstraction",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Abstract Classes</h3><p>Abstraction hides complex implementation details and shows only essential features. An abstract class has at least one <strong>pure virtual function</strong> and cannot be instantiated.</p>`,
+                codeSnippet: `class Shape {\n  public:\n    virtual void area() = 0; // Pure Virtual\n};`,
+                quiz: { q: "Syntax for pure virtual function?", options: ["= null", "= 0", "abstract", "virtual pure"], answer: 1 },
+                task: { instruction: "Create a pure virtual function 'run'.", keywords: ["virtual", "void", "run()", "=", "0"] }
+            },
+            {
+                id: 27,
+                title: "Templates",
+                image: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Generic Programming</h3><p>Templates allow you to write generic programs. You can create a single function or class to work with different data types.</p>`,
+                codeSnippet: `template &lt;typename T&gt;\nT add(T a, T b) {\n  return a + b;\n}`,
+                quiz: { q: "Keyword to start a template?", options: ["generic", "type", "template", "class"], answer: 2 },
+                task: { instruction: "Declare a template with typename T.", keywords: ["template", "<typename", "T>"] }
+            },
+            {
+                id: 28,
+                title: "Exception Handling",
+                image: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Try, Catch, Throw</h3><p>Exception handling provides a way to transfer control from one part of a program to another. C++ uses <code>try</code>, <code>catch</code>, and <code>throw</code> keywords.</p>`,
+                codeSnippet: `try {\n  if (age < 18) throw "Denied";\n} catch (const char* msg) {\n  cout << msg;\n}`,
+                quiz: { q: "Keyword to generate an exception?", options: ["try", "catch", "throw", "error"], answer: 2 },
+                task: { instruction: "Throw an integer exception 404.", keywords: ["throw", "404", ";"] }
+            },
+            {
+                id: 29,
+                title: "File Handling",
+                image: "https://images.unsplash.com/photo-1544731612-de7f96afe55f?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>fstream Library</h3><p>Used to read and write files.</p><ul><li><code>ofstream</code>: Creates/writes to files.</li><li><code>ifstream</code>: Reads from files.</li><li><code>fstream</code>: Combination of both.</li></ul>`,
+                codeSnippet: `#include &lt;fstream&gt;\nofstream MyFile("filename.txt");\nMyFile << "Files can be tricky";\nMyFile.close();`,
+                quiz: { q: "Class to write to files?", options: ["ifstream", "ofstream", "wstream", "filewriter"], answer: 1 },
+                task: { instruction: "Create an ofstream object named 'out'.", keywords: ["ofstream", "out"] }
+            },
+            {
+                id: 30,
+                title: "STL (Standard Template Library)",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Containers & Algorithms</h3><p>The STL is a powerful set of C++ template classes. It includes containers like <code>vector</code>, <code>list</code>, <code>map</code>, and algorithms like <code>sort</code>, <code>search</code>.</p>`,
+                codeSnippet: `#include &lt;vector&gt;\nvector&lt;int&gt; v = {1, 2, 3};\nv.push_back(4);`,
+                quiz: { q: "Which is a dynamic array in STL?", options: ["array", "list", "vector", "map"], answer: 2 },
+                task: { instruction: "Declare a vector of integers named 'nums'.", keywords: ["vector", "<int>", "nums"] }
+            },
+            {
+                id: 31,
+                title: "Namespaces",
+                image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Scope Management</h3><p>Namespaces prevent name collisions in large projects. Entities in different namespaces can have the same name.</p><p>Usage: <code>namespaceName::entityName</code>.</p>`,
+                codeSnippet: `namespace First {\n  int val = 500;\n}\n\nint x = First::val;`,
+                quiz: { q: "Operator to access namespace members?", options: [".", "->", "::", "#"], answer: 2 },
+                task: { instruction: "Create a namespace named 'Game'.", keywords: ["namespace", "Game", "{"] }
+            },
+            {
+                id: 32,
+                title: "Dynamic Memory Allocation",
+                image: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>New and Delete</h3><p>C++ allows you to allocate memory at runtime (Heap memory).</p><ul><li><code>new</code>: Allocates memory.</li><li><code>delete</code>: Deallocates memory (prevents leaks).</li></ul>`,
+                codeSnippet: `int* ptr = new int;\n*ptr = 5;\ndelete ptr; // Important!`,
+                quiz: { q: "Operator to free dynamic memory?", options: ["free", "delete", "remove", "clear"], answer: 1 },
+                task: { instruction: "Allocate a new integer using 'new'.", keywords: ["new", "int", ";"] }
+            },
+            {
+                id: 33,
+                title: "Operator Overloading",
+                image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Custom Operators</h3><p>You can redefine how standard operators (like +, -, <<) work with your user-defined classes.</p><p>This makes syntax intuitive for complex types like Complex Numbers or Matrices.</p>`,
+                codeSnippet: `Complex operator + (const Complex& obj) {\n  // logic to add real and imaginary parts\n}`,
+                quiz: { q: "Can you overload all C++ operators?", options: ["Yes", "No", "Only arithmetic", "Only logical"], answer: 1 },
+                task: { instruction: "Write function definition for operator+.", keywords: ["operator", "+"] }
+            },
+            {
+                id: 34,
+                title: "Inline Functions",
+                image: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Optimization</h3><p>Declaring a function as <code>inline</code> suggests to the compiler to insert the function's body where the call is being made, reducing function call overhead for small functions.</p>`,
+                codeSnippet: `inline int max(int a, int b) {\n  return (a > b) ? a : b;\n}`,
+                quiz: { q: "Inline functions primarily improve?", options: ["Readability", "Execution Speed", "Memory usage", "Compile time"], answer: 1 },
+                task: { instruction: "Define an inline void function 'fast'.", keywords: ["inline", "void", "fast"] }
+            },
+            {
+                id: 35,
+                title: "Multithreading (Basics)",
+                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>Concurrency</h3><p>C++11 introduced standard thread support via <code>&lt;thread&gt;</code>.</p><p>You can run code in parallel. Always use <code>join()</code> to wait for a thread to finish before the main program exits.</p>`,
+                codeSnippet: `#include &lt;thread&gt;\nvoid task() { ... }\n\nthread t1(task);\nt1.join();`,
+                quiz: { q: "Method to wait for a thread to finish?", options: ["stop()", "wait()", "join()", "end()"], answer: 2 },
+                task: { instruction: "Include the thread library.", keywords: ["#include", "<thread>"] }
+            },
+            {
+                id: 36,
+                title: "Capstone & Graduation",
+                image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+                theory: `<h3>The Architect's Path</h3><p>You have traversed the depths of C++, from pointers to polymorphism, from templates to threads.</p><h3>Next Steps</h3><ul><li>Explore Unreal Engine for Games.</li><li>Dive into Embedded Systems.</li><li>Master High-Frequency Trading systems.</li></ul><p><strong>Congratulations. Download your certificate now.</strong></p>`,
+                codeSnippet: `std::cout << "System Architecture: Mastered.";`,
+                quiz: { q: "What helps C++ run on different hardware?", options: ["Interpreter", "Compiler", "Browser", "Python"], answer: 1 },
+                task: { instruction: "Print 'Mastered' to console.", keywords: ["cout", "Mastered"] }
+            }
+        ];
+
+        /* -----------------------------------------------------------
+           4.2. STATE MANAGEMENT
+           ----------------------------------------------------------- */
+        let currentLevel = 1;
+        let unlockedLevels = 1;
+        let selectedQuizOption = null;
+
+        // Init: Load saved progress
+        if(localStorage.getItem('vibraniumCppProgress')) {
+            unlockedLevels = parseInt(localStorage.getItem('vibraniumCppProgress'));
+        }
+
+        /* -----------------------------------------------------------
+           4.3. UI CONTROLLER
+           ----------------------------------------------------------- */
+        function initApp() {
+            // Safety check for 36 levels
+            if(unlockedLevels > 36) unlockedLevels = 37; 
+            
+            updateSidebar();
+            loadLevel(unlockedLevels > 36 ? 36 : unlockedLevels);
+            updateProgressUI();
+        }
+
+        function updateSidebar() {
+            const list = document.getElementById('navigationList');
+            list.innerHTML = '';
+
+            curriculumData.forEach(level => {
+                const isLocked = level.id > unlockedLevels;
+                const isActive = level.id === currentLevel;
+                const isCompleted = level.id < unlockedLevels;
+
+                const div = document.createElement('div');
+                div.className = `nav-item ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`;
+                
+                let icon = isLocked ? '<i class="fas fa-lock status-icon"></i>' : (isCompleted ? '<i class="fas fa-check-circle status-icon"></i>' : '<i class="fas fa-play-circle status-icon"></i>');
+                
+                div.innerHTML = `<span>${level.id}. ${level.title}</span>${icon}`;
+                
+                if(!isLocked) {
+                    div.onclick = () => {
+                        loadLevel(level.id);
+                        if(window.innerWidth <= 768) toggleSidebar();
+                    };
+                }
+                list.appendChild(div);
+            });
+        }
+
+        function updateProgressUI() {
+            const rawPercent = ((unlockedLevels - 1) / 36) * 100;
+            const percent = Math.min(100, Math.max(0, rawPercent));
+            
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressPercent').innerText = `${Math.floor(percent)}%`;
+
+            const certBtn = document.getElementById('certUnlockBtn');
+            if(unlockedLevels > 36) {
+                certBtn.classList.add('unlocked');
+                document.getElementById('certBtnIcon').className = 'fas fa-award';
+                document.getElementById('certBtnText').innerText = "CLAIM CERTIFICATE";
+            } else {
+                certBtn.classList.remove('unlocked');
+                document.getElementById('certBtnIcon').className = 'fas fa-lock';
+                document.getElementById('certBtnText').innerText = "LOCKED";
+            }
+        }
+
+        function loadLevel(id) {
+            currentLevel = id;
+            updateSidebar();
+            const data = curriculumData.find(l => l.id === id);
+
+            document.getElementById('currentLevelId').innerText = `LEVEL ${data.id.toString().padStart(2, '0')}`;
+            document.getElementById('currentLevelTitle').innerText = data.title;
+
+            const content = document.getElementById('mainContent');
+            content.innerHTML = `
+                <img src="${data.image}" class="level-hero-image" alt="Level Image">
+                <div class="theory-block">${data.theory}</div>
+                <div class="code-display">${data.codeSnippet}</div>
+                <div class="assessment-card">
+                    <div class="assessment-header">
+                        <h4>KNOWLEDGE CHECK</h4>
+                        <span class="pass-criteria">REQ: 100% ACCURACY</span>
+                    </div>
+                    <div class="quiz-question-container">
+                        <p class="question-text"><span class="question-number">Q.</span> ${data.quiz.q}</p>
+                        ${data.quiz.options.map((opt, idx) => `
+                            <div class="quiz-option" onclick="selectOption(this, ${idx})">
+                                <input type="radio" name="quiz" value="${idx}">
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="code-challenge-container">
+                        <p class="question-text"><span class="question-number">TASK:</span> ${data.task.instruction}</p>
+                        <textarea id="codeInput" class="code-input-area" placeholder="// Write your C++ code here..." spellcheck="false"></textarea>
+                    </div>
+                    <button class="btn-submit-assessment" onclick="submitAssessment(${data.id})">SUBMIT SOLUTION</button>
+                </div>
+            `;
+            
+            selectedQuizOption = null;
+            document.querySelector('.main-workspace').scrollTo(0,0);
+        }
+
+        /* -----------------------------------------------------------
+           4.4. ASSESSMENT LOGIC
+           ----------------------------------------------------------- */
+        function selectOption(el, idx) {
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            el.querySelector('input').checked = true;
+            selectedQuizOption = idx;
+        }
+
+        function submitAssessment(levelId) {
+            const data = curriculumData.find(l => l.id === levelId);
+            const userCode = document.getElementById('codeInput').value;
+            let score = 0;
+            
+            if(selectedQuizOption === data.quiz.answer) score += 5;
+
+            let keywordsFound = 0;
+            data.task.keywords.forEach(key => {
+                if(userCode.includes(key)) keywordsFound++;
+            });
+            
+            if(keywordsFound === data.task.keywords.length) score += 5;
+            else if(keywordsFound > 0) score += 3;
+
+            showResult(score, levelId);
+        }
+
+        function showResult(score, levelId) {
+            const modal = document.getElementById('resultModal');
+            const scoreDisplay = document.getElementById('resultScore');
+            const msg = document.getElementById('resultMsg');
+            const btn = document.getElementById('resultActionBtn');
+
+            modal.style.display = 'flex';
+            scoreDisplay.innerText = `${score}/10`;
+
+            if(score === 10) {
+                scoreDisplay.className = "modal-score score-pass";
+                msg.innerText = "Excellent execution. Module cleared.";
+                
+                if(levelId === 36) {
+                    btn.innerText = "GRADUATE";
+                    btn.onclick = () => {
+                        modal.style.display = 'none';
+                        unlockNextLevel(levelId);
+                        openCertificateFlow();
+                    };
+                } else {
+                    btn.innerText = "NEXT LEVEL";
+                    btn.onclick = () => {
+                        modal.style.display = 'none';
+                        unlockNextLevel(levelId);
+                    };
+                }
+            } else {
+                scoreDisplay.className = "modal-score score-fail";
+                msg.innerText = "Solution inaccurate. Review theory and keywords.";
+                btn.innerText = "TRY AGAIN";
+                btn.onclick = () => modal.style.display = 'none';
+            }
+        }
+
+        function unlockNextLevel(currentId) {
+            if(currentId === unlockedLevels) {
+                unlockedLevels++;
+                localStorage.setItem('vibraniumCppProgress', unlockedLevels);
+                updateProgressUI();
+            }
+            if(unlockedLevels <= 36) loadLevel(unlockedLevels);
+        }
+
+        function resetProgress() {
+            if(confirm("Reset entire course progress?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        /* -----------------------------------------------------------
+           4.5. CERTIFICATE ENGINE (THE 1-PAGE FIX)
+           ----------------------------------------------------------- */
+        function openCertificateFlow() {
+            if(unlockedLevels <= 36) {
+                alert("Complete Level 36 to unlock.");
+                return;
+            }
+            document.getElementById('certificate-overlay').style.display = 'flex';
+        }
+
+        function closeCertificate() {
+            document.getElementById('certificate-overlay').style.display = 'none';
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('certificate-paper');
+            const nameInput = document.querySelector('.cert-candidate-name');
+            const nameValue = nameInput.value;
+
+            // Swap input for text
+            const originalInputHTML = nameInput.outerHTML;
+            const staticName = document.createElement('div');
+            staticName.innerText = nameValue;
+            staticName.style.cssText = "font-family: 'Pinyon Script', cursive; font-size: 5rem; color: #D4AF37; margin: 10px 0 30px 0; border: none;";
+            nameInput.replaceWith(staticName);
+
+            // OPTIMIZED PDF SETTINGS FOR 1 PAGE
+            const opt = {
+                margin: 0,
+                filename: `Vibranium_Cpp_Certificate_${nameValue.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                jsPDF: { unit: 'px', format: [1123, 794], orientation: 'landscape' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restore input
+                staticName.replaceWith(nameInput);
+                const restoredInput = document.querySelector('.cert-candidate-name');
+                restoredInput.value = nameValue;
+                restoredInput.onclick = function() { this.select(); };
+            });
+        }
+
+        function toggleSidebar() {
+            const sb = document.querySelector('.sidebar');
+            if(sb.style.left === '0px') sb.style.left = '-100%';
+            else sb.style.left = '0px';
+        }
+
+        // Init App
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>

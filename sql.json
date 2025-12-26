@@ -1,0 +1,27 @@
+CREATE DATABASE vibranium_school;
+USE vibranium_school;
+
+-- Table for storing user details
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    dob DATE,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20),
+    password VARCHAR(255)
+);
+
+-- Table for storing reviews
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(100),
+    review_text TEXT,
+    rating INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert dummy data for reviews so the section isn't empty initially
+INSERT INTO reviews (user_name, review_text, rating) VALUES 
+('Rhithick', 'Best place to learn fullstack!', 5),
+('Student 1', 'Python course is amazing.', 4),
+('Student 2', 'Simple and easy to understand.', 5);
