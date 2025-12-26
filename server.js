@@ -87,7 +87,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// 3. GET REVIEWS (LAST 5)
+// 3. GET REVIEWS (Public - Limit 5)
 app.get('/reviews', (req, res) => {
     const sql = 'SELECT * FROM reviews ORDER BY id DESC LIMIT 5';
     db.query(sql, (err, results) => {
@@ -115,13 +115,42 @@ app.get('/users', (req, res) => {
     });
 });
 
-// 6. ADMIN API: DELETE USER (New!)
+// 6. ADMIN API: DELETE USER
 app.delete('/users/:id', (req, res) => {
     const userId = req.params.id;
     const sql = 'DELETE FROM users WHERE id = ?';
     db.query(sql, [userId], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'User deleted successfully' });
+    });
+});
+
+// 7. ADMIN API: UPDATE USER
+app.put('/users/:id', (req, res) => {
+    const { name, email, phone, dob } = req.body;
+    const sql = 'UPDATE users SET name = ?, email = ?, phone = ?, dob = ? WHERE id = ?';
+    db.query(sql, [name, email, phone, dob, req.params.id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'User updated successfully' });
+    });
+});
+
+// 8. ADMIN API: GET ALL REVIEWS (For Review Manager)
+app.get('/admin/reviews', (req, res) => {
+    const sql = 'SELECT * FROM reviews ORDER BY created_at DESC';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results);
+    });
+});
+
+// 9. ADMIN API: DELETE REVIEW
+app.delete('/reviews/:id', (req, res) => {
+    const reviewId = req.params.id;
+    const sql = 'DELETE FROM reviews WHERE id = ?';
+    db.query(sql, [reviewId], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Review deleted successfully' });
     });
 });
 
